@@ -19,8 +19,13 @@
         $('#positionCompteForm').submit(function(e) {
             e.preventDefault(); // Empêcher la soumission normale du formulaire
 
+            // Récupération de la valeur du champ idCompte
             var idCompte = $('input[name="idCompte"]').val();
 
+            $('#resultatPosition').empty();
+            $('#erreurPosition').empty();
+
+            // Requête AJAX
             $.ajax({
                 url: "../controllers/PositionCompteController.php",
                 type: "POST",
@@ -28,23 +33,30 @@
                 dataType: 'json',
                 success: function (response) {
                     if (response.success === true) {
+                        // Si la réponse indique une réussite
+
                         var derniereOperation = response.derniereOperation;
                         var resultat = 'Dernière opération du compte ' + idCompte + ' : ';
 
                         if (derniereOperation == null) {
+                            // Si aucune opération récente n'est disponible
                             resultat += "Aucune action réalisée dernièrement";
                         } else {
+                            // Sinon, afficher la dernière opération
                             resultat += derniereOperation;
                         }
 
-                        $('#erreurPosition').text("");
+                        // Affichage du résultat
                         $('#resultatPosition').text(resultat);
                     } else {
-                        $('#resultatPosition').text("");
+                        // Si la réponse indique une erreur
+
+                        // Affichage du message d'erreur
                         $('#erreurPosition').text(response.message);
                     }
                 },
                 error: function (xhr, status, error) {
+                    // Callback en cas d'erreur de la requête
                     console.log(xhr.responseText);
                 }
             });

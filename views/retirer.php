@@ -38,14 +38,17 @@
 <script>
     $(document).ready(function() {
         $('#retirerArgentForm').submit(function(e) {
-            e.preventDefault();
+            e.preventDefault(); // Empêcher la soumission normale du formulaire
 
+            // Récupération des valeurs des champs idCompte et montant
             var idCompte = $('input[name="idCompte"]').val();
             var argent = $('input[name="montant"]').val();
 
+            // Suppression des messages d'erreur
             $('.error-message-id').empty();
             $('.error-message-argent').empty();
 
+            // Requête AJAX
             $.ajax({
                 url: "../controllers/RetirerArgentController.php",
                 type: "POST",
@@ -53,26 +56,36 @@
                 dataType: 'json',
                 success: function (response) {
                     if (response.success === false) {
+                        // Si la réponse indique une erreur
+
                         if (response.message.includes("nom du compte") || response.message.includes("existe")) {
+                            // Si le message d'erreur concerne l'absence de texte dans l'input ou l'inexistence du compte
                             $('.error-message-id').text(response.message);
                         } else {
+                            // Sinon, l'erreur concerne le montant
                             $('.error-message-argent').text(response.message);
                         }
                     } else {
+                        // Si la réponse indique une réussite
+
+                        // Affichage du message de succès dans un modal
                         $('#successMessage').text(response.message);
                         $('#successModal').modal('show');
                     }
                 },
                 error: function (xhr, status, error) {
+                    // Callback en cas d'erreur de la requête
                     console.log(xhr.responseText);
                 }
             });
         });
 
         $('#closeModalButton').on('click', function () {
+            // Gestion de l'événement clic sur le bouton de fermeture de la fenêtre modal
             window.location.href = "../views/index.php";
         });
     });
 </script>
+
 
 <?php include '../templates/footer.php' ?>
